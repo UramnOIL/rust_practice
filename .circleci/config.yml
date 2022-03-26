@@ -5,42 +5,33 @@ orbs:
 
 executors:
   rust:
-    - image: cimg/rust:1.59
-  docker:
-    - image: cimg/base:2022.03
+    docker:
+      - image: cimg/rust:1.59
 
 jobs:
   test:
-    executor: docker
+    executor: rust
     steps:
       - checkout
-      - run:
-        name: テスト
-        command: cargo test
+      - run: cargo test
   build:
     executor: rust
     steps:
       - checkout
-      - run:
-        name: ターゲットを追加
-        command: rustup target add aarch64-unknown-linux-gnu
-      - run:
-        name: 依存関係をインストール
-        command: |
+      - run: rustup target add aarch64-unknown-linux-gnu
+      - run: |
           sudo apt-get update
           sudo apt install gcc-aarch64-linux-gnu
-      - run:
-        name: アプリケーションをビルド
-        command: cargo build --release
+      - run: cargo build --release
       - setup_remote_docker
-      - aws-ecr/build-and-push-image:
-          platform: linux/arm64
-          repo: rust-practice
-          create-repo: true
-          tag: latest
 
 workflows:
   build:
     jobs:
       - test
       - build
+      - aws-ecr/build-and-push-image:
+          platform: linux/arm64
+          repo: rust-practice
+          create-repo: true
+          tag: latest
