@@ -13,6 +13,10 @@ jobs:
     executor: rust
     steps:
       - checkout
+      - run: rustup target add aarch64-unknown-linux-gnu
+      - run: |
+          sudo apt-get update
+          sudo apt install gcc-aarch64-linux-gnu
       - run: cargo test
   build:
     working_directory: ~/project
