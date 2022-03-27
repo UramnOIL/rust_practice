@@ -33,11 +33,11 @@ jobs:
     docker: 
       - image: cimg/base:stable
     steps:
-      - gh/install
-      - run: gh repo clone git@github.com:UramnOIL/kubernetes_practice.git
       - add_ssh_keys:
           fingerprints:
             - "9a:b6:99:34:4f:49:3d:fc:01:d1:bf:18:b7:06:9b:01"
+      - gh/setup
+      - run: gh repo clone git@github.com:UramnOIL/kubernetes_practice.git
       - run:
           name: edit 
           working_directory: kubernetes_practice/
