@@ -32,6 +32,7 @@ jobs:
     docker: 
       - image: cimg/base:stable
     steps:
+      - checkout
       - add_ssh_keys:
           fingerprints:
             - "16:0b:61:80:6e:13:53:78:6d:1c:df:d7:b3:42:58:05"
