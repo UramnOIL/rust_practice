@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   aws-ecr: circleci/aws-ecr@8.0.0
+  gh: circleci/github-cli@2.0
 
 executors:
   rust:
@@ -32,23 +33,31 @@ jobs:
     docker: 
       - image: cimg/base:stable
     steps:
-      - checkout
+      - gh/install
+      - run: gh repo clone git@github.com:UramnOIL/kubernetes_practice.git
       - add_ssh_keys:
           fingerprints:
-            - "16:0b:61:80:6e:13:53:78:6d:1c:df:d7:b3:42:58:05"
-      - run: |
-          wget -q https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386
-          sudo mv yq_linux_386 /usr/local/bin/yq
-          sudo chmod +x /usr/local/bin/yq
-          yq e -i '.spec.template.spec.containers[0].image |= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_RESION}.amazonaws.com/rust-practice:'${CIRCLE_SHA1:0:7}'"' frontend.yaml
-      - run: |
-          git config --global user.email "gitops@example.com"
-          git config --global user.name "GitOps Bot"
-          git remote set-url --push origin git@github.com:uramnoil/rust_practice.git
-          git checkout -b release-${CIRCLE_SHA1:0:7}
-          git add .
-          git commit -m "Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
-          git push origin HEAD
+            - "9a:b6:99:34:4f:49:3d:fc:01:d1:bf:18:b7:06:9b:01"
+      - run:
+          name: edit 
+          working_directory: kubernetes_practice/
+          command: |
+            wget -q https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386
+            sudo mv yq_linux_386 /usr/local/bin/yq
+            sudo chmod +x /usr/local/bin/yq
+            yq e -i '.spec.template.spec.containers[0].image |= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_RESION}.amazonaws.com/rust-practice:'${CIRCLE_SHA1:0:7}'"' frontend.yaml
+      - run:      
+          name: commit and create pull-request
+          working_directory: kubernetes_practice/
+          command: |
+            git config --global user.email "gitops@example.com"
+            git config --global user.name "GitOps Bot"
+            git remote set-url --push origin git@github.com:uramnoil/rust_practice.git
+            git checkout -b release-${CIRCLE_SHA1:0:7}
+            git add .
+            git commit -m "Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
+            git push origin HEAD
+            gh pr create --base main --title "Release rust-practice:${CIRCLE_SHA1:0:7}"
 workflows:
   build:
     jobs:
