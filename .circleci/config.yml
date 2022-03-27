@@ -29,7 +29,8 @@ jobs:
           paths:
             - "target/aarch64-unknown-linux-gnu/release/rust_practice"
   pullrequest:
-    docker: cimg/base:stable
+    docker: 
+      - image: cimg/base:stable
     steps:
       - add_ssh_keys:
           fingerprints:
