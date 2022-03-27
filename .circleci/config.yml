@@ -28,6 +28,24 @@ jobs:
           root: "~/project"
           paths:
             - "target/aarch64-unknown-linux-gnu/release/rust_practice"
+  pullrequest:
+    steps:
+      - add_ssh_keys:
+        fingerprints:
+          - "16:0b:61:80:6e:13:53:78:6d:1c:df:d7:b3:42:58:05"
+      - run: |
+          wget -q https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386
+          sudo mv yq_linux_386 /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          yq e -i '.spec.template.spec.containers[0].image |= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_RESION}.amazonaws.com/rust-practice:'${CIRCLE_SHA1:0:7}'"' frontend.yaml
+      - run: |
+          git config --global user.email "gitops@example.com"
+          git config --global user.name "GitOps Bot"
+          git remote set-url --push origin git@github.com:uramnoil/rust_practice.git
+          git checkout -b release-${CIRCLE_SHA1:0:7}
+          git add .
+          git commit -m "Release circleci-demo-gitops-app ${CIRCLE_SHA1:0:7}"
+          git push origin HEAD
 workflows:
   build:
     jobs:
@@ -44,3 +62,4 @@ workflows:
           tag: ${CIRCLE_SHA1:0:7}
           requires:
             - build
+      - pullrequest:
