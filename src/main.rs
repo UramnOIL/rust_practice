@@ -7,7 +7,7 @@ async fn index() -> impl Responder {
         Ok(val) => val,
         Err(err) => err.to_string(),
     };
-    format!("The name of the pod on which the application is running is {}", podname)
+    format!("{}", podname)
 }
 
 #[actix_web::main]
