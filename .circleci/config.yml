@@ -64,4 +64,4 @@ workflows:
           tag: ${CIRCLE_SHA1:0:7}
           requires:
             - build
-      - pullrequest:
+      - pullrequest
