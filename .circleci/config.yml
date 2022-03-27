@@ -13,11 +13,7 @@ jobs:
     executor: rust
     steps:
       - checkout
-      - run: rustup target add aarch64-unknown-linux-gnu
-      - run: |
-          sudo apt-get update
-          sudo apt install gcc-aarch64-linux-gnu
-      - run: cargo test
+      - run: cargo test --target x86_64-unknown-linux-gnu
   build:
     working_directory: ~/project
     executor: rust
@@ -32,8 +28,6 @@ jobs:
           root: "~/project"
           paths:
             - "target/aarch64-unknown-linux-gnu/release/rust_practice"
-
-
 workflows:
   build:
     jobs:
@@ -47,6 +41,6 @@ workflows:
           platform: linux/arm64
           repo: rust-practice
           create-repo: true
-          tag: latest
+          tag: ${CIRCLE_SHA1:0:7}
           requires:
             - build
