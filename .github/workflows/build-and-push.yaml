@@ -8,7 +8,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           toolchain: stable
       - uses: actions/cache@v2
@@ -25,7 +25,7 @@ jobs:
     needs: cargo-test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup target
         run: |
           sudo apt update
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Download a single artifact
         uses: actions/download-artifact@v3
         with:
@@ -74,4 +74,31 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: 926972041025.dkr.ecr.ap-northeast-1.amazonaws.com/rust-practice:${{ github.sha }}
-
+  pull-request:
+    name: Create Pull-Request of Updating Kubernetes Manifest
+    needs: cargo-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout other repo
+        uses: actions/checkout@v3
+        with:
+          repository: UramnOIL/kubernetes_practice
+          path: kubernetes_practice
+      - name: edit 
+        working-directory: ./kubernetes_practice
+        run: |
+          wget -q https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_386
+          sudo mv yq_linux_386 /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          yq e -i '.spec.template.spec.containers[0].image |= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_RESION}.amazonaws.com/rust-practice:'${CIRCLE_SHA1:0:7}'"' frontend.yaml
+      - name: commit and create pull-request
+        working-directory: ./kubernetes_practice
+        run: |
+          git config --global user.email "gitops@example.com"
+          git config --global user.name "GitOps Bot"
+          git remote set-url --push origin git@github.com:uramnoil/rust_practice.git
+          git checkout -b release-${{ github.sha }}
+          git add .
+          git commit -m "Release circleci-demo-gitops-app ${{ github.sha }}"
+          git push origin HEAD
+          gh pr create --base main --title "Release rust-practice:${{ github.sha }}"
