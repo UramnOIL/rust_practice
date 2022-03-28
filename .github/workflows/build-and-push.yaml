@@ -92,7 +92,7 @@ jobs:
           sudo chmod +x /usr/local/bin/yq
           yq e -i '.spec.template.spec.containers[0].image |= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_RESION}.amazonaws.com/rust-practice:'${CIRCLE_SHA1:0:7}'"' frontend.yaml
       - name: Login
-        run: gh auth login --with-token ${{ secrets.GITHUB_API_TOKEN }}
+        run: gh auth login --with-token ${{ secrets.GH_TOKEN }}
       - name: commit and create pull-request
         working-directory: ./kubernetes_practice
         run: |
