@@ -55,6 +55,8 @@ jobs:
         with:
           name: rust_practice
           path: target/aarch64-unknown-linux-gnu/release/
+      - run: |
+          ls .
       - name: Login to ECR
         uses: docker/login-action@v1
         with:
