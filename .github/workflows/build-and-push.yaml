@@ -50,13 +50,13 @@ jobs:
     needs: cargo-build
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
       - name: Download a single artifact
         uses: actions/download-artifact@v3
         with:
           name: rust_practice
-          path: target/aarch64-unknown-linux-gnu/release/
-      - run: |
-          ls -R target
+          path: target/aarch64-unknown-linux-gnu/release
       - name: Login to ECR
         uses: docker/login-action@v1
         with:
@@ -70,6 +70,7 @@ jobs:
       - name: Build and push Docker image to ECR
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           platforms: linux/arm64
           tags: 926972041025.dkr.ecr.ap-northeast-1.amazonaws.com/rust-practice:${{ github.sha }}
