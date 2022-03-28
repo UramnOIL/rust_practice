@@ -28,7 +28,7 @@ jobs:
       - name: Setup target
         run: |
           sudo apt update
-          sudo apt install aarch64-linux-gnu-gcc
+          sudo apt install gcc-aarch64-linux-gnu
       - uses: actions/cache@v2
         with:
           path: |
