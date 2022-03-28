@@ -70,6 +70,4 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: 926972041025.dkr.ecr.ap-northeast-1.amazonaws.com/rust-practice:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
 
