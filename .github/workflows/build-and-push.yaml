@@ -76,7 +76,7 @@ jobs:
           tags: 926972041025.dkr.ecr.ap-northeast-1.amazonaws.com/rust-practice:${{ github.sha }}
   pull-request:
     name: Create Pull-Request of Updating Kubernetes Manifest
-    needs: cargo-build
+    needs: docker-build-and-push-image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout other repo
