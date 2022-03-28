@@ -78,6 +78,8 @@ jobs:
     name: Create Pull-Request of Updating Kubernetes Manifest
     needs: docker-build-and-push-image
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_API_TOKEN }}
     steps:
       - name: Checkout other repo
         uses: actions/checkout@v3
