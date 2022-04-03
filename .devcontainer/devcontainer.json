@@ -45,6 +45,5 @@
 	"remoteUser": "vscode",
 	"features": {
 		"git": "latest",
-		"github-cli": "latest"
 	}
 }
