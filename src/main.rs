@@ -10,6 +10,8 @@ async fn index() -> HttpResponse {
     HttpResponseBuilder::new(StatusCode::ACCEPTED)
         .append_header(ContentType::plaintext())
         .append_header(("Access-Control-Allow-Origin", "*"))
+        .append_header(("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE"))
+        .append_header(("Access-Control-Allow-Headers", "Origin, Authorization, Accept, Content-Type"))
         .body(podname)       
 }
 
